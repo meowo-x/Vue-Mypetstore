@@ -271,7 +271,7 @@
 
   .brief {
     padding-top: 40px;
-    align-items: center;
+    justify-content:center;
     font-size: 25px;
     font-weight: initial;
     color: #767676;

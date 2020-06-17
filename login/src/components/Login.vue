@@ -11,12 +11,12 @@
           <el-input  type="password" v-model="loginForm.password" placeholder="Password"></el-input>
         </el-form-item>
         <el-form-item prop="phone">
-          <el-input  type="text" placeholder="Phone">
+          <el-input  type="text" v-model="loginForm.phone" placeholder="Phone">
             <el-button slot="append" icon="el-icon-s-promotion" @click="sendCode" :loading="logining1"></el-button>
           </el-input>
         </el-form-item>
         <el-form-item prop="verifyCode">
-          <el-input  type="text" v-model="loginForm.code" placeholder="Identifying Code" ></el-input>
+          <el-input  type="text" v-model="loginForm.verifyCode" placeholder="Identifying Code" ></el-input>
         </el-form-item>
         <el-form-item>
           <div class="space">
@@ -109,7 +109,7 @@
             //转
             this.logining1 = true;
             let _this = this;
-              this.$axios.post('/api/account/verifyCode', _this.loginForm.phone).then(res =>
+              this.$axios.post('/api/account/verifyCode', {"phone":this.loginForm.phone}).then(res =>
               {
                 //按钮不转了
                 this.logining1 = false;

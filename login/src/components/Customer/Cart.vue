@@ -1,6 +1,5 @@
 <template>
   <div class="cart">
-
     <el-image style="width: 150px; height: 100px;margin-top: 86px" :src="url1"></el-image>
     <el-table
       id="money"

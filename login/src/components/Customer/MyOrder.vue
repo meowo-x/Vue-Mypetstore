@@ -1,9 +1,15 @@
 <template>
       <div class="order">
-        <el-image style="width: 150px; height: 100px;margin-top: 86px" :src="url"></el-image>
-        <el-card
+        <el-image style="width: 120px; height: 120px;margin-top: 88px" :src="url"></el-image>
+        <el-table
+          id="money"
+          :loading="loading"
+          ref="checkedCart"
+          :data="order"
+          tooltip-effect="dark"
           style="width: 90%;left: 5%">
-        </el-card>>
+<!--          @selection-change="handleSelectionChange"-->
+        </el-table>
     </div>
 </template>
 
@@ -13,6 +19,7 @@
         data() {
             return {
               url: 'http://qbyy9dziv.bkt.clouddn.com/order.png',
+              order:[]
             }
         },
 
