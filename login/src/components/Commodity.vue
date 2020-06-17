@@ -11,35 +11,36 @@
           <!--          product-->
           <div class="product">
             <div
-              v-for="(product, index2) in category.ProductList"
+              v-for="(product, index2) in category.productList"
               :key="index2">
               <div>{{product.name}}
+                <div style="font-size: 15px;color: #767676">{{product.text}}</div>
                 <!--            item-->
                 <div class="item">
                   <el-carousel height="200px" arrow="never" indicator-position="outside" :autoplay="false">
-                    <el-carousel-item v-for="(itemList,index3) in product.ItemList" :key="index3">
+                    <el-carousel-item v-for="(itemList,index3) in product.itemList" :key="index3">
                       <el-row :gutter="20">
-                        <el-col :span="8" v-for="item in itemList.item" :key="item.id">
+                        <el-col :span="8" v-for="(item,index4) in itemList.item" :key="index4">
                           <div class="img">
                             <img :src="item.url" alt="">
                             <div class="overlay-thumb">
                               <div class="details">
-                                <span class="title">{{item.id}}</span>
+                                <span class="title">{{item.itemId}}</span>
                                 <span class="info">
                                   <!-- 这里有个假的"喜欢人数"    {{item.like}}-->
-                                  $&nbsp{{item.UnitCost}}&nbsp♡&nbsp50
+                                  $&nbsp{{item.price}}&nbsp♡&nbsp50
                                 <span class="more">
-                                  {{item.Attribute}}
+                                  productId:{{item.productId}}
                                   <br>
-                                  Supplier:{{item.Supplier}}
+                                  {{item.attribute}}
                                   <br>
-                                  Status:{{item.Status}}
+                                  Quantity:{{item.quantity}}
                                   <br>
                                   <el-button type="warning"
                                              icon="el-icon-shopping-cart-2"
                                              circle
                                              style="float: right;font-size: 22px"
-                                             @click="addToCart(item.id)">
+                                             @click="addToCart(item.itemId,username)">
                                   </el-button>
                                 </span>
                                 </span>
@@ -79,7 +80,8 @@
     name: 'app',
     data() {
       return {
-        CategoryList:[],
+        CategoryList:[
+        ],
         steps: {
           active: 0,
           step: [
@@ -87,8 +89,7 @@
             {title: 'CAT'},
             {title: 'DOG'},
             {title: 'FISH'},
-            {title: 'REPTILES'},
-            {title: 'HAMSTER'}
+            {title: 'REPTILES'}
           ]
         }
       }
@@ -102,29 +103,14 @@
       this.getCategoryList();
     },
     methods: {
-      getCategoryList() {
-        let _this = this;
-        this.$axios.get('http://localhost:3000/CategoryList').then(function (res) {
-          if (res.status !== 200) {
-            _this.$message({
-              type: 'warning',
-              message: "aaa"
-            });
-          }
-          _this.CategoryList = res.data;
-          console.log(res);
-        })
-      },
       onScroll() {
         let scrolled = document.documentElement.scrollTop || document.body.scrollTop
         // 手动获取到各个锚点的距离
-        if (scrolled >= 3000) {
-          this.steps.active = 5
-        } else if (scrolled < 3000 && scrolled >= 2400) {
+        if (scrolled > 4000) {
           this.steps.active = 4
-        } else if (scrolled < 2400 && scrolled >= 1800) {
+        } else if (scrolled < 4000 && scrolled >= 3000) {
           this.steps.active = 3
-        } else if (scrolled < 1800 && scrolled >= 1200) {
+        } else if (scrolled < 3000 && scrolled >= 1200) {
           this.steps.active = 2
         } else if (scrolled < 1200 && scrolled >= 600) {
           this.steps.active = 1
@@ -132,31 +118,43 @@
           this.steps.active = 0
         }
       },
-      async addToCart(id) {
-        // if(user == false){
-        //   this.$router.push('/login');
-        //     this.$message({
-        //       message: 'Please login in first',
-        //       type: 'warning'
-        //     });
-        // }
-        // else{
-        const {data: res} = await this.$axios.put('item/' + id);
-        if (res.meta.status !== 200) {
+      getCategoryList() {
+        let _this = this;
+        this.$axios.get('/api/catalog/').then(function (res) {
+          console.log(res);
+          if (res.status !== 200) {
+            _this.$message({
+              type: 'warning',
+              message: "Cannot get category"
+            });
+          }
+          _this.CategoryList = res.data.data;
+          console.log(res.data.data);
+        })
+      },
+       addToCart(itemID,username) {
+        const tokenStr = sessionStorage.getItem('token');
+        if (!tokenStr) {
+            this.$message({
+              message: 'Please login in first',
+              type: 'warning'
+            });
+          this.$router.push('/login');
+        }else{
+        const {data: res} =  this.$axios.post('/api/cart/' + username + itemID);
+        if (res.status !== 200) {
           return this.$message.error('Add failed!')
         }
           this.$message({
             message: 'Add to cart successfully',
             type: 'success'
           });
-        // }
-
+        }
       },
+
     },
     computed:{
-      user(){
-        return this.$store.state.user
-      }
+
     },
     components: {
       'left-step': leftSteps
@@ -170,7 +168,7 @@
   }
 
   .product {
-    height: 550px;
+    height: auto;
     background-color: #ffffff;
     color: #636363;
     font-size: 20px;
@@ -185,7 +183,7 @@
   }
 
   .d_jump {
-    height: 600px;
+    height: auto;
     font-size: 30px;
     color: #ffffff;
     background-color: transparent;

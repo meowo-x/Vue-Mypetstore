@@ -11,8 +11,9 @@
     <div class="row">
       <el-row>
         <!-- 左边logo -->
-        <el-col :span="2" >
+        <el-col :span="4">
           <img @click="home" src="../assets/logo.png" class="logo" alt="">
+
         </el-col>
 
         <!-- 中间导航区域 -->
@@ -23,55 +24,83 @@
             router
             mode="horizontal"
             @select="handleSelect"
-            active-text-color="#000"
-          >
+            active-text-color="#000">
+            <!--                  这个平滑-->
             <el-menu-item>
-              <span class="header-title" @click="toAbout"><i class="el-icon-s-promotion"></i>AboutUs</span>
+              <span  @click="toAbout"><i class="el-icon-s-promotion"></i>AboutUs</span>
             </el-menu-item>
-            <!-- 循环写的路由，其中路由中有  hidden：true 的就不加入循环 -->
-            <template
-              v-for="route in $router.options.routes"
-              v-if="!route.hidden">
-              <!-- 循环没有children的路由 -->
-              <el-menu-item
-                v-if="!route.hasChild"
-                :key="route.path"
-                :index="route.path" >
-                <i :class="route.class"></i>
-                {{ route.name }}
-              </el-menu-item>
-              <!-- 循环有children的路由 -->
-              <el-submenu v-else :index="route.path">
-                <template slot="title">
-                  <i :class="route.class"></i>
-                  {{ route.name }}</template>
-                <el-menu-item
-                  v-for="child in route.children"
-                  :index="child.path"
-                  :key="child.path">
-                  <i :class="child.class"></i>
-                  {{ child.name }}
-                </el-menu-item>
-              </el-submenu>
-            </template>
+              <!-- 循环写的路由，其中路由中有  hidden：true 的就不加入循环 -->
+              <template
+                v-for="routeAll in $router.options.routes"
+                v-if="!routeAll.hidden">
+                <template v-for="route in routeAll.children" v-if="!route.hidden">
+                  <!-- 循环没有children的路由 -->
+                  <el-menu-item
+                    v-if="!route.hasChild"
+                    :key="route.path"
+                    :index="route.path" >
+                    <template slot="title" style="font-size: 15px">
+                      <i :class="route.class"></i>
+                      {{ route.name }}
+                    </template>
+                  </el-menu-item>
+                  <!-- 循环有children的路由 -->
+
+                  <el-submenu v-else :index="route.path" >
+                    <template slot="title" style="font-size: 15px">
+                      <i :class="route.class"></i>
+                      {{ route.name }}
+                    </template>
+                    <el-menu-item
+                      v-for="child in route.children"
+                      :index="child.path"
+                      :key="child.path"
+                      style="font-size: 15px">
+                      <i :class="child.class"></i>
+                      {{ child.name }}
+                    </el-menu-item>
+                  </el-submenu>
+                </template>
+                </template>
+
+<!--            <el-menu-item index="commodity">-->
+<!--              <span><i class="el-icon-s-goods"></i>Commodity</span>-->
+<!--            </el-menu-item>-->
+<!--            <el-menu-item index="help">-->
+<!--              <span><i class="el-icon-question"></i>Help</span>-->
+<!--            </el-menu-item>-->
+<!--            <el-submenu>-->
+<!--              <template slot="title" style="font-size: 15px"><i class="el-icon-user-solid"></i>My</template>-->
+<!--              <el-menu-item>-->
+<!--                <span @click="cart"><i class="el-icon-shopping-cart-2"></i>Cart</span>-->
+<!--              </el-menu-item>-->
+<!--              <el-menu-item>-->
+<!--                <span @click="order"><i class="el-icon-notebook-2"></i>Order</span>-->
+<!--              </el-menu-item>-->
+<!--              <el-menu-item>-->
+<!--                <span @click="setting"><i class="el-icon-setting"></i>Setting</span>-->
+<!--              </el-menu-item>-->
+
           </el-menu>
         </el-col>
         <!-- 根据logined值的真假来判断是显示登录按钮还是用户信息
              以后根据登录状态来改变 -->
-        <el-button-group v-if="!logined" >
-          <el-button  class="button" @click.native="login" type="danger" size="small" round >Log In</el-button>
-          <el-button  class="button" @click.native="signUp" type="success" size="small" round >Sign Up</el-button>
-        </el-button-group>
-        <div v-else>
+        <el-col :span="6" class="user">
+
+        <div v-if="username">
           <el-dropdown>
-            <img class="avatar" src="../assets/1.jpg" alt="">
+            <img class="avatar" src="http://qbyy9dziv.bkt.clouddn.com/item1.JPG" alt="">
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>Admin1</el-dropdown-item>
-              <el-dropdown-item>Setting</el-dropdown-item>
-              <el-dropdown-item divided>Log Out</el-dropdown-item>
+              <el-dropdown-item v-text="username" disabled></el-dropdown-item>
+              <el-dropdown-item @click.native="logout" divided>Log Out</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
+          <el-button-group v-else>
+            <el-button  class="button" @click.native="login" type="danger" size="small" round >Log In</el-button>
+            <el-button  class="button" @click.native="signUp" type="success" size="small" round >Sign Up</el-button>
+          </el-button-group>
+        </el-col>
       </el-row>
     </div>
 
@@ -85,11 +114,15 @@
     // ...
     data () {
       return {
-        logined: false
+      }
+    },
+    computed:{
+      username(){
+        return sessionStorage.getItem('username');
       }
     },
     methods: {
-      // 给用户一点提示
+      // 如果没登陆，给用户一点提示
       handleSelect (key) {
         const tokenStr = sessionStorage.getItem('token');
         if (!tokenStr && (key === '/my/cart')) {
@@ -111,10 +144,30 @@
       signUp () {
         this.$router.push('/signUp')
       },
-
+      //这里是平滑滚动
       toAbout(){
         this.$router.push('/');
         document.getElementById('aboutTitle').scrollIntoView({ block: 'start', behavior: 'smooth' });
+      },
+
+      logout() {
+        this.$confirm('退出后将返回登录界面, 是否退出登录?', '真的要退出吗？', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          sessionStorage.removeItem('username');
+          this.$router.push('/login');
+          this.$message({
+            type: 'danger',
+            message: '退出成功!'
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消退出'
+          })
+        })
       },
 
   }
@@ -155,6 +208,11 @@
     background-color: transparent;
 
   }
+  .menu-header template{
+    font-size: 15px;
+    background-color: transparent;
+  }
+
   .logo-header{
     padding-top: 10px;
     padding-left: 40px;
@@ -202,7 +260,16 @@
     width: 63px;
     height: 60px;
   }
-  .header-title{
-    font-size: 15px;
+
+  .button {
+    margin: 15px 0;
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    margin: 10px 0;
+    cursor: pointer;
   }
 </style>

@@ -11,7 +11,6 @@
     name: '',
     data () {
       return {
-
       }
     },
     mounted: function () {},

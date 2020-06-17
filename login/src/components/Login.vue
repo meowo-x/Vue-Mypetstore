@@ -11,12 +11,12 @@
           <el-input  type="password" v-model="loginForm.password" placeholder="Password"></el-input>
         </el-form-item>
         <el-form-item prop="phone">
-          <el-input  type="text" v-model="loginForm.phone" placeholder="Phone">
-            <el-button slot="append" icon="el-icon-s-promotion" @click="sendCode"></el-button>
+          <el-input  type="text" placeholder="Phone">
+            <el-button slot="append" icon="el-icon-s-promotion" @click="sendCode" :loading="logining1"></el-button>
           </el-input>
         </el-form-item>
         <el-form-item prop="verifyCode">
-          <el-input  type="text" v-model="loginForm.code" placeholder="Identifying Code" :loading="logining1"></el-input>
+          <el-input  type="text" v-model="loginForm.code" placeholder="Identifying Code" ></el-input>
         </el-form-item>
         <el-form-item>
           <div class="space">
@@ -48,18 +48,18 @@
   export default {
     data() {
       //验证手机号
-      var checkPhone = (rule, value, cb) => {
-        const regPhone = /^(0|86|17951)?(13[0-9]|15[012356789]|18[0-9]|14[57]|17[678])[0-9]{8}$/;
-        if (regPhone.test(value)) {
-          return cb();
-        }
-        cb(new Error("Please enter legal phone number"));
-      };
+      // var checkPhone = (rule, value, cb) => {
+      //   const regPhone = /^(0|86|17951)?(13[0-9]|15[012356789]|18[0-9]|14[57]|17[678])[0-9]{8}$/;
+      //   if (regPhone.test(value)) {
+      //     return cb();
+      //   }
+      //   cb(new Error("Please enter legal phone number"));
+      // };
       return {
         loginForm: {
-          username: 'j2',
-          password: '',
-          phone: '',
+          username: 'wx',
+          password: 'wx',
+          phone: '111',
           verifyCode:'',
         },
         logining1: false,
@@ -71,9 +71,9 @@
               trigger: 'blur'
             },
             {
-              min: 3,
+              min: 2,
               max: 10,
-              message: 'Between 3-10 characters',
+              message: 'Between 2-10 characters',
               trigger: 'blur'
             }
           ],
@@ -82,9 +82,9 @@
               required: true, message: 'Please enter password', trigger: 'blur'
             },
             {
-              min: 6,
-              max: 15,
-              message: 'Between 6-15 characters',
+              min: 2,
+              max: 10,
+              message: 'Between 2-10 characters',
               trigger: 'blur'
             }
           ],
@@ -92,10 +92,10 @@
             {
               required: true, message: 'Please enter your phone number', trigger: 'blur'
             },
-            {
-              validator: checkPhone,
-              trigger: 'blur'
-            }
+            // {
+            //   validator: checkPhone,
+            //   trigger: 'blur'
+            // }
           ],
         }
       }
@@ -109,43 +109,48 @@
             //转
             this.logining1 = true;
             let _this = this;
-            const {data: res} = this.$axios.post('/api/account/verifyCode', _this.loginForm);
-              //按钮不转了
-              this.logining = false;
-              //423代表用户不存在
-              if (res.status === 423) {
-                _this.$message({
-                  type: 'warning',
-                  message: "No such account"
-                });
-              }
-              else{
-                _this.$message({
-                  type: 'success',
-                  message: "Send to your phone successfully"
-                });
-              }
-              console.log(res);
+              this.$axios.post('/api/account/verifyCode', _this.loginForm.phone).then(res =>
+              {
+                //按钮不转了
+                this.logining1 = false;
+                //200表示发送成功了
+                if (res.data.status === 200) {
+                  _this.$message({
+                    type: 'success',
+                    message: "Send to your phone successfully"
+                  });
+                }
+                else{
+                  _this.$message({
+                    type: 'error',
+                    message: "No such phone"
+                  });
+                }
+              })
           }
       })
       },
       login() {
         this.$refs.loginForm.validate((valid) => {
           if (valid) {
+            // sessionStorage.setItem('username', 'user1');
+            // this.$router.push('/my/cart');
             // 按钮开始转
             this.logining2 = true;
             let _this = this;
-            const {data: res} = this.$axios.post('/api/account/token', _this.loginForm);
-              //如果没这个人
-              if (res.status === 423) {
+            this.$axios.post('/api/account/token', _this.loginForm).then(res => {
+              //424用户名或密码错误
+              // const re = res.data;
+              console.log(res);
+              if (res.data.status === 423) {
                 // 按钮不转了
                 this.logining2 = false;
                 _this.$message({
                   type: 'warning',
-                  message: "No such account"
+                  message: "Error in username or password"
                 });
-                //423验证码错误
-              }else if(res.status === 423) {
+                //424验证码错误
+              } else if (res.data.status === 424) {
                 // 注册按钮不转了
                 this.logining2 = false;
                 _this.$message({
@@ -153,7 +158,7 @@
                   message: "Error in identifying code"
                 });
                 // 206 用户登录成功
-              } else if(res.status === 206) {
+              } else if (res.data.status === 206) {
                 // 注册按钮不转了
                 this.logining2 = false;
                 this.$message({
@@ -161,22 +166,29 @@
                   message: "Login as a user successfully"
                 });
                 // 将返回的数据注入内存
-                sessionStorage.setItem('token', res.data.user.token);
+                sessionStorage.setItem('token', res.data.data.user.token);
+                sessionStorage.setItem('user', JSON.stringify(res.data.data.user));
                 //跳转到我的信息的页面
                 this.$router.push('/my/cart');
                 //207管理员登陆成功
-              }else if(res.status === 207){
+              } else if (res.data.status === 207) {
                 this.$message({
                   type: 'success',
                   message: "Login as an admin successfully"
                 });
                 // 将返回的数据注入内存
-                sessionStorage.setItem('token', res.data.admin.token);
+                sessionStorage.setItem('token', res.data.data.admin.token);
+                sessionStorage.setItem('admin', JSON.stringify(res.data.data.admin));
                 //跳转到我的信息的页面
                 this.$router.push('/admin');
               }
+            }).catch(err=>{
+              this.$message({
+                type: 'error',
+                message: "Error"
+              });
+            })
           }
-
         })
       },
       reset () {

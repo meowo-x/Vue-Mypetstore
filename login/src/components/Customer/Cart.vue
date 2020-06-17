@@ -51,7 +51,7 @@
     </el-table>
 
 
-    <Affix :offset-bottom="10">
+    <Affix :offset-bottom="0">
       <el-card shadow="always">
         <el-row :gutter="20">
           <el-col :span="1">
@@ -147,7 +147,7 @@
         url2: require("@/assets/panda2.png"),
         cartList: [
           {
-            ItemUrl: require("@/assets/item1.jpg"),
+            ItemUrl: '',
             ItemID: 'EST-1',
             ProductID: 'FI-SW-01',
             Description: 'Large',
@@ -157,7 +157,7 @@
             TotalCost: 10,
           },
           {
-            ItemUrl: require("@/assets/item2.jpg"),
+            ItemUrl: 'http://qbyy9dziv.bkt.clouddn.com/item1.JPG',
             ItemID: 'EST-2',
             ProductID: 'FI-SW-01',
             Description: 'Large',
@@ -167,7 +167,7 @@
             TotalCost: 20,
           },
           {
-            ItemUrl: require("@/assets/item2.jpg"),
+            ItemUrl: '',
             ItemID: 'EST-2',
             ProductID: 'FI-SW-01',
             Description: 'Large',
@@ -177,7 +177,7 @@
             TotalCost: 20,
           },
           {
-            ItemUrl: require("@/assets/item2.jpg"),
+            ItemUrl: '',
             ItemID: 'EST-2',
             ProductID: 'FI-SW-01',
             Description: 'Large',
@@ -187,7 +187,7 @@
             TotalCost: 20,
           },
           {
-            ItemUrl: require("@/assets/item2.jpg"),
+            ItemUrl: '',
             ItemID: 'EST-2',
             ProductID: 'FI-SW-01',
             Description: 'Large',
@@ -197,7 +197,7 @@
             TotalCost: 20,
           },
           {
-            ItemUrl: require("@/assets/item2.jpg"),
+            ItemUrl: '',
             ItemID: 'last-2',
             ProductID: 'FI-SW-01',
             Description: 'Large',
@@ -214,7 +214,7 @@
             item:
               [{
                 id: 'EST-1',
-                url: require("@/assets/item3.jpg"),
+                url: '',
                 UnitCost: '10',
                 Supplier: '1',
                 Status: 'P',
@@ -222,7 +222,7 @@
                 rotate: false,
               }, {
                 id: 'item2',
-                url: require("@/assets/item2.jpg"),
+                url: '',
                 UnitCost: '10',
                 Supplier: '1',
                 Status: 'P',
@@ -230,7 +230,7 @@
                 rotate: false,
               }, {
                 id: 'item3',
-                url: require("@/assets/item1.jpg"),
+                url: 'http://qbyy9dziv.bkt.clouddn.com/login.JPG',
                 UnitCost: '10',
                 Supplier: '1',
                 Status: 'P',
@@ -238,7 +238,7 @@
                 rotate: false,
               }, {
                 id: 'item3',
-                url: require("@/assets/item1.jpg"),
+                url: 'http://qbyy9dziv.bkt.clouddn.com/login.JPG',
                 UnitCost: '10',
                 Supplier: '1',
                 Status: 'P',
