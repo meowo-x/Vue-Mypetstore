@@ -18,7 +18,7 @@
                 <!--            item-->
                 <div class="item">
                   <el-carousel height="200px" arrow="never" indicator-position="outside" :autoplay="false">
-                    <el-carousel-item v-for="(itemList,index3) in product.itemList" :key="index3">
+                    <el-carousel-item v-for="(itemList,index5) in product.itemList" :key="index5">
                       <el-row :gutter="20">
                         <el-col :span="8" v-for="(item,index4) in itemList.item" :key="index4">
                           <div class="img">
@@ -40,7 +40,7 @@
                                              icon="el-icon-shopping-cart-2"
                                              circle
                                              style="float: right;font-size: 22px"
-                                             @click="addToCart(item.itemId,username)">
+                                             @click="addToCart(item.itemId,username,usernameAdmin)">
                                   </el-button>
                                 </span>
                                 </span>
@@ -102,6 +102,15 @@
     created(){
       this.getCategoryList();
     },
+    computed: {
+      //获取用户
+      username() {
+        return sessionStorage.getItem('username');
+      },
+      usernameAdmin(){
+        return sessionStorage.getItem('usernameAdmin');
+      }
+    },
     methods: {
       onScroll() {
         let scrolled = document.documentElement.scrollTop || document.body.scrollTop
@@ -132,28 +141,38 @@
           console.log(res.data.data);
         })
       },
-       addToCart(itemID,username) {
-        const tokenStr = sessionStorage.getItem('token');
-        if (!tokenStr) {
+       addToCart(itemId,username,usernameAdmin) {
+        if (!username) {
+          if(usernameAdmin){
+            this.$message({
+              message: 'You cannot add items as an admin',
+              type: 'warning'
+            });
+          }else
+          {
             this.$message({
               message: 'Please login in first',
               type: 'warning'
             });
-          this.$router.push('/login');
+            this.$router.push('/login');
+          }
         }else{
-        const {data: res} =  this.$axios.post('/api/cart/' + username + itemID);
-        if (res.status !== 200) {
-          return this.$message.error('Add failed!')
-        }
-          this.$message({
-            message: 'Add to cart successfully',
-            type: 'success'
-          });
+        this.$axios.post('/api/cart/cartItem/' + username +'/'+ itemId).then(res=>{
+          console.log(res);
+          if (res.data.status !== 200) {
+            return this.$message.error('Add failed!')
+          }else{
+            this.$message({
+              message: 'Add to cart successfully',
+              type: 'success'
+            });
+          }
+        }).catch(err=>{
+          console.log(err);
+          return this.$message.error('Add failed!');
+        })
         }
       },
-
-    },
-    computed:{
 
     },
     components: {

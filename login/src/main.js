@@ -29,7 +29,7 @@ Vue.prototype.$axios = axios;
 // 添加请求拦截器，在请求头中加token
 axios.interceptors.request.use(config=>{
   //为请求头config添加Authorization
-  config.headers.Authorization = sessionStorage.getItem('token');
+  config.headers.token = sessionStorage.getItem('token');
   return config;
 });
 

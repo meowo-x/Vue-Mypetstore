@@ -1,4 +1,22 @@
 <template>
+<!--
+wen xin
+fron-end
+let we think about it that who is wx?
+however, why wx look like it?
+oh, we are also curious about it.
+All above are about wx.
+that`s all.thank you.
+
+Yaxun Yang
+java developer
+who is yyx?
+what`s yyx doing?
+i will help you to learn more about yyx.
+ok, now you know enough about yyx.
+i really hope this helps
+
+-->
   <!--   background-color: #f5b1aa-->
   <div class="all"  id="topTitle">
     <!--  上面滚动图-->
@@ -31,7 +49,7 @@
                 <h3 class="title">What's New</h3>
                 <span class="post">New Items</span>
                 <ul class="icon">
-                  <li><a @click="category"><i class="el-icon-link"></i></a></li>
+                  <li><a @click="commodity"><i class="el-icon-link"></i></a></li>
                 </ul>
               </div>
             </div>
@@ -43,7 +61,7 @@
                 <h3 class="title">Start With</h3>
                 <span class="post">Guess What You Like</span>
                 <ul class="icon">
-                  <li><a @click="category"><i class="el-icon-link"></i></a></li>
+                  <li><a @click="commodity"><i class="el-icon-link"></i></a></li>
                 </ul>
               </div>
             </div>
@@ -55,7 +73,7 @@
                 <h3 class="title">On Sales</h3>
                 <span class="post">The Cheapest</span>
                 <ul class="icon">
-                  <li><a @click="category"><i class="el-icon-link"></i></a></li>
+                  <li><a @click="commodity"><i class="el-icon-link"></i></a></li>
                 </ul>
               </div>
             </div>
@@ -75,7 +93,9 @@
             <div class="description">
               发现更多剁手好物
             </div>
-            <div class="to" :to="{ path: '/admin' }">→</div>
+            <el-link :underline="false">
+            <div class="to" @click="cart">→</div>
+            </el-link>
           </div>
         </el-col>
         <el-col :span="12">
@@ -96,9 +116,12 @@
             <div class="description">
               看看宝贝发货了吗
             </div>
-            <div class="to">
-              ←
-            </div>
+            <el-link :underline="false"  @click="order">
+              <div class="to">
+                ←
+              </div>
+            </el-link>
+
           </div>
         </el-col>
       </el-row>
@@ -118,22 +141,7 @@
 </template>
 
 <script>
-
   export default {
-    // filters: {
-    //   filter1(uMobile,uType) {
-    //     console.log("id:"+uMobile);
-    //     console.log("value:"+uType);
-    //     if (uType == '♫BIRDS') {
-    //       var name = "用户" + parseInt(uMobile).toString(16);
-    //       return name;
-    //     }else {
-    //       var name = "律师" + parseInt(uMobile).toString(16);
-    //       return name
-    //     }
-    //   },
-    //
-    // },
     data() {
       return {
         message: 'hello',
@@ -143,118 +151,60 @@
           require("@/assets/03.jpg"),
           require("@/assets/04.jpg")
         ],
-        CategoryList: [
-          {
-            id: '♫BIRDS',
-            ProductList: [{
-              id: 'AV-CB-01',
-              name: 'Amazon Parrot',
-              description: 'Great companion for up to 75 years',
-              itemList: [{
-                id: 'EST-1',
-                url: require("@/assets/ham.png"),
-                UnitCost: '10',
-                Supplier: '1',
-                Status: 'P',
-                Attribute: 'Spotted Adult Female',
-                rotate: false,
-              }, {
-                id: 'item2',
-                url: require("@/assets/ham.png"),
-                UnitCost: '10',
-                Supplier: '1',
-                Status: 'P',
-                Attribute: 'Spotted Adult Female',
-                rotate: false,
-              }, {
-                id: 'item3',
-                url: require("@/assets/ham.png"),
-                UnitCost: '10',
-                Supplier: '1',
-                Status: 'P',
-                Attribute: 'Spotted Adult Female',
-                rotate: false,
-              }, {
-                id: 'item4',
-                url: require("@/assets/ham.png"),
-                UnitCost: '10',
-                Supplier: '1',
-                Status: 'P',
-                Attribute: 'Spotted Adult Female',
-                rotate: false,
-              }]
-            }, {
-              id: 'AV-CB-02',
-              name: 'Finch',
-              description: 'Great companion for up to 75 years',
-            }]
-          },
-          {
-            id: '🐾 CATS',
-            ProductList: [{
-              id: 'AV-CB-01',
-              name: 'Amazon Parrot',
-              description: 'Great companion for up to 75 years',
-              itemList: [{
-                id: 'EST-1',
-                url: require("@/assets/ham.png"),
-                UnitCost: '10',
-                Supplier: '1',
-                Status: 'P',
-                Attribute: 'Spotted Adult Female',
-                rotate: false,
-              }, {
-                id: 'item2',
-                url: require("@/assets/ham.png"),
-                UnitCost: '10',
-                Supplier: '1',
-                Status: 'P',
-                Attribute: 'Spotted Adult Female',
-                rotate: false,
-              }, {
-                id: 'item3',
-                url: require("@/assets/ham.png"),
-                UnitCost: '10',
-                Supplier: '1',
-                Status: 'P',
-                Attribute: 'Spotted Adult Female',
-                rotate: false,
-              }, {
-                id: 'item4',
-                url: require("@/assets/ham.png"),
-                UnitCost: '10',
-                Supplier: '1',
-                Status: 'P',
-                Attribute: 'Spotted Adult Female',
-                rotate: false,
-              }]
-            }, {
-              id: 'AV-CB-02',
-              name: 'Finch',
-              description: 'Great companion for up to 75 years',
-            }]
-          },
-          {
-            id: '🐾 Dogs',
-            name: 'Dogs',
-          },
-          {
-            id: '🐾 4',
-            name: '4',
-          },
-          {
-            id: '🐾 5',
-            name: '5',
-          },
-        ],
+
 
       }
     },
-
-
+    computed: {
+      //获取用户
+      username() {
+        return sessionStorage.getItem('username');
+      },
+      usernameAdmin(){
+        return sessionStorage.getItem('usernameAdmin');
+      }
+    },
     methods:{
-      category(){
+      commodity(){
         this.$router.push('/commodity')
+      },
+      cart(){
+        if (!this.username) {
+          if(this.usernameAdmin){
+            this.$message({
+              message: 'You cannot see it as an admin',
+              type: 'warning'
+            });
+          }else
+          {
+            this.$message({
+              message: 'Please login in first',
+              type: 'warning'
+            });
+            this.$router.push('/login');
+          }
+        }else{
+          this.$router.push('/my/cart');
+        }
+      },
+      order(){
+        if (!this.username) {
+          if(this.usernameAdmin){
+            this.$message({
+              message: 'You cannot see it as an admin',
+              type: 'warning'
+            });
+          }else
+          {
+            this.$message({
+              message: 'Please login in first',
+              type: 'warning'
+            });
+            this.$router.push('/login');
+          }
+        }else{
+          this.$router.push('/my/order');
+        }
       }
     },
   }

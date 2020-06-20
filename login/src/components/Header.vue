@@ -25,7 +25,7 @@
             mode="horizontal"
             @select="handleSelect"
             active-text-color="#000">
-            <!--                  这个平滑-->
+            <!--这个是平滑滚动到aboutus-->
             <el-menu-item>
               <span  @click="toAbout"><i class="el-icon-s-promotion"></i>AboutUs</span>
             </el-menu-item>
@@ -45,14 +45,15 @@
                     </template>
                   </el-menu-item>
                   <!-- 循环有children的路由 -->
-
-                  <el-submenu v-else :index="route.path" >
+<!--                  user-->
+                  <el-submenu  :index="route.path" v-if="route.hasChild && username && route.isUser">
                     <template slot="title" style="font-size: 15px">
                       <i :class="route.class"></i>
                       {{ route.name }}
                     </template>
                     <el-menu-item
                       v-for="child in route.children"
+                      v-if="!child.hidden"
                       :index="child.path"
                       :key="child.path"
                       style="font-size: 15px">
@@ -60,26 +61,26 @@
                       {{ child.name }}
                     </el-menu-item>
                   </el-submenu>
+<!--                 admin -->
+                  <el-submenu  :index="route.path" v-if="route.hasChild && usernameAdmin  && !route.isUser">
+                    <template slot="title" style="font-size: 15px">
+                      <i :class="route.class"></i>
+                      {{ route.name }}
+                    </template>
+                    <el-menu-item
+                      v-for="child in route.children"
+                      v-if="!child.hidden"
+                      :index="child.path"
+                      :key="child.path"
+                      style="font-size: 15px">
+                      <i :class="child.class"></i>
+                      {{ child.name }}
+                    </el-menu-item>
+
+                  </el-submenu>
                 </template>
                 </template>
 
-<!--            <el-menu-item index="commodity">-->
-<!--              <span><i class="el-icon-s-goods"></i>Commodity</span>-->
-<!--            </el-menu-item>-->
-<!--            <el-menu-item index="help">-->
-<!--              <span><i class="el-icon-question"></i>Help</span>-->
-<!--            </el-menu-item>-->
-<!--            <el-submenu>-->
-<!--              <template slot="title" style="font-size: 15px"><i class="el-icon-user-solid"></i>My</template>-->
-<!--              <el-menu-item>-->
-<!--                <span @click="cart"><i class="el-icon-shopping-cart-2"></i>Cart</span>-->
-<!--              </el-menu-item>-->
-<!--              <el-menu-item>-->
-<!--                <span @click="order"><i class="el-icon-notebook-2"></i>Order</span>-->
-<!--              </el-menu-item>-->
-<!--              <el-menu-item>-->
-<!--                <span @click="setting"><i class="el-icon-setting"></i>Setting</span>-->
-<!--              </el-menu-item>-->
 
           </el-menu>
         </el-col>
@@ -89,14 +90,23 @@
 
         <div v-if="username">
           <el-dropdown>
-            <img class="avatar" src="http://qbyy9dziv.bkt.clouddn.com/item1.JPG" alt="">
+            <el-image class="avatar" :src="user.url" alt=""></el-image>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item v-text="username" disabled></el-dropdown-item>
               <el-dropdown-item @click.native="logout" divided>Log Out</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
-          <el-button-group v-else>
+          <div v-if="usernameAdmin">
+            <el-dropdown>
+              <el-image class="avatar" :src="admin.url" alt=""></el-image>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item v-text="usernameAdmin" disabled></el-dropdown-item>
+                <el-dropdown-item @click.native="logout" divided>Log Out</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
+          <el-button-group v-if="!username&&!usernameAdmin">
             <el-button  class="button" @click.native="login" type="danger" size="small" round >Log In</el-button>
             <el-button  class="button" @click.native="signUp" type="success" size="small" round >Sign Up</el-button>
           </el-button-group>
@@ -104,30 +114,43 @@
       </el-row>
     </div>
 
-
   </div>
 
 
 </template>
 <script>
   export default {
-    // ...
+    inject:['reload'],
     data () {
       return {
+        user: {},
+        admin: {},
       }
     },
     computed:{
+      user(){
+        return sessionStorage.getItem('user');
+      },
       username(){
         return sessionStorage.getItem('username');
+      },
+      admin(){
+        return sessionStorage.getItem('user');
+      },
+      usernameAdmin(){
+        return sessionStorage.getItem('usernameAdmin');
       }
+    },
+    created() {
+      this.getUser();
+      this.getAdmin();
     },
     methods: {
       // 如果没登陆，给用户一点提示
       handleSelect (key) {
         const tokenStr = sessionStorage.getItem('token');
-        if (!tokenStr && (key === '/my/cart')) {
-          let _this = this;
-          _this.$message({
+        if (!tokenStr && (key === '/my/cart' || key === '/my/order'  || key === '/my/setting' )){
+          this.$message({
             type: 'warning',
             message: "Please login first"
           });
@@ -149,7 +172,7 @@
         this.$router.push('/');
         document.getElementById('aboutTitle').scrollIntoView({ block: 'start', behavior: 'smooth' });
       },
-
+      //登出
       logout() {
         this.$confirm('退出后将返回登录界面, 是否退出登录?', '真的要退出吗？', {
           confirmButtonText: '确定',
@@ -161,12 +184,39 @@
           this.$message({
             type: 'danger',
             message: '退出成功!'
-          })
+          });
+          this.reload();
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消退出'
           })
+        })
+      },
+      getUser(){
+        let _this = this;
+        this.$axios.get('/api/account/user/' + this.username).then(res => {
+          console.log(res);
+          if (res.data.status !== 200) {
+            return this.$message.error('Get user failed')
+          }else {
+            _this.user = res.data.data.user;
+          }
+        }).catch(err => {
+          console.log(err);
+        })
+      },
+      getAdmin(){
+        let _this = this;
+        this.$axios.get('/api/account/admin/' + this.username).then(res => {
+          console.log(res);
+          if (res.data.status !== 200) {
+            return this.$message.error('Get admin failed')
+          }else {
+            _this.admin = res.data.data.admin;
+          }
+        }).catch(err => {
+          console.log(err);
         })
       },
 

@@ -46,6 +46,7 @@
 
 <script>
   export default {
+    inject:['reload'],
     data() {
       //验证手机号
       // var checkPhone = (rule, value, cb) => {
@@ -59,7 +60,7 @@
         loginForm: {
           username: 'wx',
           password: 'wx',
-          phone: '111',
+          phone: '12345678909',
           verifyCode:'',
         },
         logining1: false,
@@ -119,12 +120,14 @@
                     type: 'success',
                     message: "Send to your phone successfully"
                   });
+                  console.log('Send ok');
                 }
                 else{
                   _this.$message({
                     type: 'error',
                     message: "No such phone"
                   });
+                  console.log('Error in phone');
                 }
               })
           }
@@ -140,7 +143,6 @@
             let _this = this;
             this.$axios.post('/api/account/token', _this.loginForm).then(res => {
               //424用户名或密码错误
-              // const re = res.data;
               console.log(res);
               if (res.data.status === 423) {
                 // 按钮不转了
@@ -149,6 +151,7 @@
                   type: 'warning',
                   message: "Error in username or password"
                 });
+                this.reset();
                 //424验证码错误
               } else if (res.data.status === 424) {
                 // 注册按钮不转了
@@ -157,6 +160,7 @@
                   type: 'error',
                   message: "Error in identifying code"
                 });
+                this.reset();
                 // 206 用户登录成功
               } else if (res.data.status === 206) {
                 // 注册按钮不转了
@@ -166,10 +170,11 @@
                   message: "Login as a user successfully"
                 });
                 // 将返回的数据注入内存
-                sessionStorage.setItem('token', res.data.data.user.token);
-                sessionStorage.setItem('user', JSON.stringify(res.data.data.user));
+                sessionStorage.setItem('token', res.data.data.token);
+                sessionStorage.setItem('username', res.data.data.user.username);
                 //跳转到我的信息的页面
                 this.$router.push('/my/cart');
+                this.reload();
                 //207管理员登陆成功
               } else if (res.data.status === 207) {
                 this.$message({
@@ -177,12 +182,14 @@
                   message: "Login as an admin successfully"
                 });
                 // 将返回的数据注入内存
-                sessionStorage.setItem('token', res.data.data.admin.token);
-                sessionStorage.setItem('admin', JSON.stringify(res.data.data.admin));
+                sessionStorage.setItem('token', res.data.data.token);
+                sessionStorage.setItem('usernameAdmin', res.data.data.admin.username);
                 //跳转到我的信息的页面
-                this.$router.push('/admin');
+                this.$router.push('/admin/account');
+                this.reload();
               }
             }).catch(err=>{
+              console.log(err);
               this.$message({
                 type: 'error',
                 message: "Error"

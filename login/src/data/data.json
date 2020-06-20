@@ -84,17 +84,38 @@
     }
   ],
 
-  "cart": [
+  "itemShowList": [
     {
       "userId": "j2ee",
       "ItemUrl": "http://qbyy9dziv.bkt.clouddn.com/item1.JPG",
       "ItemID": "EST-1",
-      "ProductID": "FI-SW-01",
-      "Description": "Large",
-      "InStock": "Y",
-      "Quantity": 1,
-      "ListPrice": 10,
-      "TotalCost": 10
+      "productID": "FI-SW-01",
+      "text": "Spotted Adult Female",
+      "stock": "Y",
+      "quantity": 1,
+      "price": 10,
+      "totalCost": 10
+    }
+  ],
+  "order": [
+    {
+      "orderid": "1000",
+      "username": "j2ee",
+      "orderdate": "2019-10-27",
+      "totalprice": 39.5,
+      "paid": "",
+      "sendTo": ""
+    }
+  ],
+  "checkOrder": [
+    {
+      "username": "wx",
+      "phone": "15243666630",
+      "addr": "四川省内江市市中区玉溪街道双洞路187号石油容器厂小区门口货架上",
+      "totalprice": 39.5,
+      "paid": "Yes",
+      "sendTo": "四川省内江市市中区玉溪街道双洞路187号石油容器厂小区门口货架上",
+      "totalcount": 4
     }
   ]
 }
