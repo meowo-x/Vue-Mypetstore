@@ -12,7 +12,7 @@
       </el-row>
       <!-- 面包屑-->
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/admin' }">Main</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/home' }">Admin</el-breadcrumb-item>
         <el-breadcrumb-item>Goods</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -28,7 +28,6 @@
         :label="category.id"
         :name="category.name">
         <!--            category展示-->
-
         <div class="cate-show">
           <div class="title">
             <span v-show="!editCategory">{{category.id}}</span>
@@ -67,7 +66,7 @@
           </div>
         </el-dialog>
         <el-card shadow="hover"
-                 v-for="(product, index2) in category.ProductList"
+                 v-for="(product, index2) in category.productList"
                  :key="index2"
                  class="product">
           <!--            product展示-->
@@ -94,8 +93,8 @@
             <span v-show="!editItem">  ✔ID:「{{product.id}}」</span>
             <el-input v-show="editItem" v-model="product.id" style="width: 50%"></el-input>
             <br>
-            <span v-show="!editItem">✔{{product.description}}</span>
-            <el-input v-show="editItem" v-model="product.description" style="width: 50%"></el-input>
+            <span v-show="!editItem">✔{{product.text}}</span>
+            <el-input v-show="editItem" v-model="product.text" style="width: 50%"></el-input>
           </div>
           <br>
           <!--  添加item对话框-->
@@ -125,12 +124,7 @@
                   <el-option label="sup2" value="2"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item class="formitem" label="Status" prop="Status">
-                <el-select v-model="addItemForm.Status">
-                  <el-option label="P" value="P"></el-option>
-                  <el-option label="N" value="N"></el-option>
-                </el-select>
-              </el-form-item>
+
               <el-form-item label="Attribute" prop="Attribute">
                 <el-input v-model="addItemForm.Attribute"></el-input>
               </el-form-item>
@@ -142,36 +136,35 @@
             </div>
           </el-dialog>
           <!--            item展示-->
-          <div class="item">
+          <div class="item"  v-for="(itemList,index5) in product.itemList" :key="index5">
             <el-card shadow="hover"
-                     v-for="(item, index3) in product.itemList"
-                     :key="index3"
+                     v-for="(item, index4) in itemList.item"
+                     :key="index4"
                      class="-item-content">
               <!-- 正面-->
               <div class="show">
                 <el-row :gutter="5" :class="[item.rotate? 'go' : 'no' ]">
-                  <el-col :span="16">
-                    <el-image class="image" :src="item.url"></el-image>
+                  <el-col :span="16" style="padding-top: 20px">
+                    <el-image style="width: 250px;height: 250px;" :src="item.url"></el-image>
                   </el-col>
                   <el-col :span="8">
-                    <span class="subsubtitle">{{item.id}}</span>
+                    <span class="subsubtitle">{{item.itemId}}</span>
                     <div class="desciption">
                       <br>
                       <!-- 这里有个假的"喜欢人数"-->
-                      <span style="font-size: 20px">$&nbsp{{item.UnitCost}}&nbsp♡&nbsp50</span>
+                      <span style="font-size: 20px">$&nbsp{{item.price}}&nbsp♡&nbsp50</span>
                       <br> <br>
-                      <span class="attr">✔{{item.Attribute}}</span>
+                      <span class="attr">✔{{item.attribute}}</span>
                       <br> <br>
-                      <span class="ProductId">✔Supplier:</span>
-                      <span>{{item.Supplier}}</span>
+                      <span class="ProductId">✔Quantity:</span>
+                      <span>{{item.quantity}}</span>
                       <br> <br>
-                      <span class="ProductId">✔Status:</span>
-                      <span>{{item.Status}}</span>
+
                       <div style=" padding-top: 10px">
-                        <el-button @click="start(item,item.id)" type="text" icon="el-icon-edit" class="button">Edit
+                        <el-button @click="start(item,item.itemId)" type="text" icon="el-icon-edit" class="button">Edit
                         </el-button>
                       </div>
-                      <el-button @click="deleteItem(item.id)" type="text" icon="el-icon-delete-solid" class="button"
+                      <el-button @click="deleteItem(item.itemId)" type="text" icon="el-icon-delete-solid" class="button"
                       >Delete&nbsp
                       </el-button>
                     </div>
@@ -183,42 +176,47 @@
                 <el-form :model="editItemForm" status-icon ref="editItemForm" :label-position="left"
                          label-width="80px" style="padding-top: 10px">
                   <br>
-                  <el-form-item label="Picture" prop="url" >
-                    <el-upload
-                      class="upload"
-                      action="#"
-                      multiple
-                      :limit="1"
-                      :on-exceed="handleExceed"
-                      :http-request="httpRequest">
-                      <img :src="editItemForm.url" hidden>
-                      <el-button size="small" type="primary">Click to upload</el-button>
-                    </el-upload>
-                  </el-form-item>
+                  <el-row>
+                    <el-col :span="12">
+                      <el-form-item label="Picture" prop="fileName" label-width="20px">
+                        <el-upload
+                          class="upload"
+                          action="#"
+                          multiple
+                          :limit="1"
+                          :on-exceed="handleExceed"
+                          :http-request="httpRequest">
+                          <img :src="editItemForm.fileName" hidden>
+                          <el-button size="small" type="primary">Click to upload</el-button>
+                        </el-upload>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-form-item label="file name" prop="id" >
+                        <el-input v-model="editItemForm.fileName" ></el-input>
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+
+
                   <el-form-item class="formitem" label="Item Id" prop="id">
-                    <el-input v-model="editItemForm.id" disabled></el-input>
+                    <el-input v-model="editItemForm.itemId" disabled></el-input>
                   </el-form-item>
                   <el-form-item class="formitem" label="Unit Cost" prop="UnitCost">
-                    <el-input v-model="editItemForm.UnitCost"></el-input>
+                    <el-input v-model="editItemForm.price"></el-input>
                   </el-form-item>
-                  <el-form-item class="formitem" label="Supplier" prop="Supplier">
-                    <el-select v-model="editItemForm.Supplier">
-                      <el-option label="sup1" value="1"></el-option>
-                      <el-option label="sup2" value="2"></el-option>
-                    </el-select>
+                  <el-form-item class="formitem" label="quantity" prop="UnitCost">
+                    <el-input v-model="editItemForm.quantity"></el-input>
                   </el-form-item>
-                  <el-form-item class="formitem" label="Status" prop="Status">
-                    <el-select v-model="editItemForm.Status">
-                      <el-option label="P" value="P"></el-option>
-                      <el-option label="N" value="N"></el-option>
-                    </el-select>
+                  <el-form-item class="formitem" label="productId" prop="UnitCost">
+                    <el-input v-model="editItemForm.productId"></el-input>
                   </el-form-item>
                   <el-form-item label="Attribute" prop="Attribute">
-                    <el-input v-model="editItemForm.Attribute"></el-input>
+                    <el-input v-model="editItemForm.attribute"></el-input>
                   </el-form-item>
                   <br>
                   <el-form-item style=" padding-top: 10px;padding-left: 10px">
-                    <el-button @click="start(item,item.id)" type="text" icon="el-icon-view" class="button">Show
+                    <el-button @click="start(item,item.itemId)" type="text" icon="el-icon-view" class="button">Show
                     </el-button>
                     <el-button @click="editItemInfo" type="text" icon="el-icon-finished" class="button">Confirm&nbsp&nbsp
                     </el-button>
@@ -255,61 +253,7 @@
         editProduct: false,
         editCategory: false,
         CategoryListValue: '1',
-        CategoryList: [
-          {
-            id: '♫BIRDS',
-            ProductList: [{
-              id: 'AV-CB-01',
-              name: 'Amazon Parrot',
-              description: 'Great companion for up to 75 years',
-              itemList: [{
-                id: 'EST-1',
-                url: require("@/assets/ham.png"),
-                UnitCost: '10',
-                Supplier: '1',
-                Status: 'P',
-                Attribute: 'Spotted Adult Female',
-                rotate: false,
-              }, {
-                id: 'item2',
-                url: require("@/assets/ham.png"),
-                UnitCost: '10',
-                Supplier: '1',
-                Status: 'P',
-                Attribute: 'Spotted Adult Female',
-                rotate: false,
-              }, {
-                id: 'item3',
-                url: require("@/assets/ham.png"),
-                UnitCost: '10',
-                Supplier: '1',
-                Status: 'P',
-                Attribute: 'Spotted Adult Female',
-                rotate: false,
-              }, {
-                id: 'item4',
-                url: require("@/assets/ham.png"),
-                UnitCost: '10',
-                Supplier: '1',
-                Status: 'P',
-                Attribute: 'Spotted Adult Female',
-                rotate: false,
-              }]
-            }, {
-              id: 'AV-CB-02',
-              name: 'Finch',
-              description: 'Great companion for up to 75 years',
-            }]
-          },
-          {
-            id: '🐾 CATS',
-            name: 'Cats',
-            ProductList: [{
-              productId: '2pro1',
-            }, {
-              productId: '2pro2',
-            }]
-          }],
+        CategoryList: [],
         tabIndex: 2,
         // 获取列表参数
         quertInfo: {
@@ -328,12 +272,7 @@
         },
         //添加新Item
         addItemForm: {
-          id: '',
-          url: '',
-          UnitCost: '',
-          Supplier: '',
-          Status: '',
-          Attribute: '',
+
           rotate: false,
         }
       }
@@ -343,13 +282,19 @@
     },
     methods: {
       //获取CategoryList
-      async getCategoryList() {
-        const {data: res} = await this.$axios.get('category', {params: this.quertInfo});
-        if (res.meta.status !== 200) {
-          return this.$message.error('获取Goods信息失败')
-        }
-        this.CategoryList = res.data.CategoryList;
-        console.log(res)
+      getCategoryList() {
+        let _this = this;
+        this.$axios.get('/api/catalog/').then(function (res) {
+          console.log(res);
+          if (res.status !== 200) {
+            _this.$message({
+              type: 'warning',
+              message: "Cannot get category"
+            });
+          }
+          _this.CategoryList = res.data.data;
+          console.log(res.data.data);
+        })
       },
       // 添加和删除tab(Category)
       handleTabsEdit(targetName, action) {
@@ -363,11 +308,14 @@
           });
           this.CategoryListValue = newTabName;
           //post
-          const {data: res} = this.$axios.post('category' + id, this.CategoryList);
-          if (res.meta.status !== 201) {
-            this.$message.error('Add category failed!');
-          }
-          this.$message.success('Add category successfully');
+          this.$axios.post('/api/catalog/category', this.CategoryList).then(res=>{
+            if (res.data.status !== 200) {
+              this.$message.error('Add category failed!');
+            }
+            this.$message.success('Add category successfully');
+          }).catch(err=>{
+            console.log(err)
+          })
         }
         if (action === 'remove') {
           //弹窗
@@ -402,13 +350,14 @@
               message: 'Deletion have been cancelled.'
             });
           });
-          const {data: res} = this.$axios.delete('category/' + id);
-          if (res.meta.status !== 200) {
-            return this.$message.error('Delete failed!')
-          }
-          this.$message.success('Delete successfully!');
-          // 刷新列表
-          this.getCategoryList();
+          this.$axios.delete('/api/catalog/category/' + id).then(res=>{
+            if (res.data.status !== 200) {
+              return this.$message.error('Delete failed!')
+            }
+            this.$message.success('Delete successfully!');
+            // 刷新列表
+            this.getCategoryList();
+          })
         }
       },
       /*  添加,编辑，删除Product */
@@ -478,6 +427,9 @@
         // 刷新列表
         this.getCategoryList();
       },
+
+
+
       /* 添加 编辑 删除 item */
       // 监听添加item对话框的关闭事件
       addItemClose() {
@@ -500,51 +452,57 @@
         })
       },
       //点一次Item旋转一次，编辑内容的请求
-      async start(item, id) {
+      start(item, id) {
         item.rotate = !item.rotate;
-        const {data: res} = await this.$axios.get('category/' + id);
-        if (res.meta.status !== 200) {
-          return this.$message.error('Query Failed!')
-        }
-        this.editItemForm = res.data;
+        this.$axios.get('/api/catalog/item/' + id).then(res=>{
+          console.log(res);
+          if (res.data.status !== 200) {
+            return this.$message.error('Query Failed!')
+          }
+          this.editItemForm = res.data.data.item;
+        }).catch(err=>{
+          console.log(err)
+        })
+
       },
       //只允许上传1张照片
       handleExceed(files) {
         this.$message.warning(`Only 1 picture is accessible`);
       },
       //处理显示缩略图，并且将需要用到的file转换成base64的文件格式
-      httpRequest(item) {
+      httpRequest(editItemForm) {
         let _this = this;
         let rd = new FileReader(); // 创建文件读取对象
-        let file = item.file;
+        let file = editItemForm.file;
         rd.readAsDataURL(file); // 文件读取装换为base64类型
         rd.onloadend = function (e) {
-          _this.data.imageUrl = this.result // this指向当前方法onloadend的作用域
-        }
+          _this.editItemForm.file = this.result // this指向当前方法onloadend的作用域
+        };
+        console.log(_this.editItemForm.file)
       },
       // 清除编辑内容
       resetForm(editItemForm) {
         this.$refs[editItemForm].resetFields();
       },
+
       // 提交item编辑内容
       editItemInfo() {
-        this.$refs.editItemFormRef.validate(async valid => {
+        this.$refs.editItemForm.validate(valid => {
+          if (valid) {
           // 可以发起edit item 的网络请求
-          const {data: res} = await this.$axios.put('category/'+ this.editItemForm.id, {
-            url: this.editItemForm.url,
-            UnitCost: this.editItemForm.UnitCost,
-            Supplier: this.editItemForm.Supplier,
-            Status: this.editItemForm.Status,
-            Attribute: this.editItemForm.Attribute,
-            rotate: this.editItemForm.rotate,
-          });
-          if (res.meta.status !== 201) {
-            this.$message.error('Edit Failed!');
+          this.$axios.post('/api/catalog/item/'+ this.editItemForm).then(res=>{
+            console.log('itemmmm');
+              console.log(res);
+              if (res.data.status !== 200) {
+                this.$message.error('Edit Failed!');
+              }
+              this.$message.success('Edit successfully');
+              // 刷新列表
+              this.getCategoryList();
+          })
           }
-          this.$message.success('Edit successfully');
-          // 刷新列表
-          this.getCategoryList();
         })
+
       },
       //删除item
       async deleteItem(itemId) {
@@ -587,6 +545,7 @@
 
   .product {
     background-color: whitesmoke;
+    height: 1000px;
   }
 
   .item {
@@ -656,7 +615,7 @@
     display: flex;
     justify-content: space-between;
     padding-right: 20px;
-    width: 100%;
+    width: 40px;
   }
 
   .cate-show {

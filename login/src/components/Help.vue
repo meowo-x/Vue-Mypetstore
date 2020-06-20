@@ -1,311 +1,197 @@
 <template>
-  <div class="all-next">
-    <div class='main-body'>
-      <div class="category">
-        <div class="d_jump" v-for="(category,index) in CategoryList" :key="index">
-          <div class="top">
-            &nbsp
-          </div>
-          <i class="el-icon-caret-right"></i> {{category.id}} <i class="el-icon-caret-left"></i>
-          <!--          product-->
-          <div class="product">
-            <div
-              v-for="(product, index2) in category.ProductList"
-              :key="index2">
-              <div>{{product.name}}
-                <!--            item-->
-                <div class="item">
-                  <el-carousel height="200px" arrow="never" indicator-position="outside">
-                    <el-carousel-item v-for="(itemList,index3) in product.ItemList" :key="index3">
-                      <el-row :gutter="20">
-                        <el-col :span="8" v-for="item in itemList.item" :key="item.id">
-                          {{item.id}}
-                          <el-image class="item-image" :src="item.url"></el-image>
+  <div>
+    <!--    占位-->
+    <div style="width: 140px; height: 100px; "></div>
+    <head>
+      <title>My JPetStore</title>
+      <link rel="StyleSheet" href="css/jpetstore.css" type="text/css" media="screen"/>
+    </head>
 
-<!--                          id: 'EST-1',-->
-<!--                          url: require("@/assets/ham.png"),-->
-<!--                          UnitCost: '10',-->
-<!--                          Supplier: '1',-->
-<!--                          Status: 'P',-->
-<!--                          Attribute: 'Spotted Adult Female',-->
-                        </el-col>
-                      </el-row>
-                    </el-carousel-item>
-                  </el-carousel>
+    <body>
+    <div id="Content">
 
-                </div>
-                <!--              item-->
-              </div>
-              <br>
-            </div>
-          </div>
-          <!--              product结束-->
+      <h1>JPetStore Demo</h1>
 
-        </div>
-        <!-- 左侧-基于element-ui的step组件封装 -->
-        <div class="step">
-          <left-step :steps="steps"></left-step>
-        </div>
-      </div>
+      <p>
+        The JPetStore Demo is an online pet store. Like most e-stores, you can browse
+        and search the product catalog, choose items to add to a shopping cart, amend
+        the shopping cart, and order the items in the shopping cart. You can perform
+        many of these actions without registering with or logging into the
+        application. However, before you can order items you must log in (sign in) to
+        the application. In order to sign in, you must have an account with the
+        application, which is created when you register (sign up) with the
+        application.
+      </p>
+
+      <ul>
+        <li><a href="#SigningUp">Signing Up</a></li>
+        <li><a href="#SigningIn">Signing In</a></li>
+        <li><a href="#Catalog">Working with the Product Catalog</a></li>
+        <li><a href="#CatalogBrowsing">Browsing the Catalog</a></li>
+        <li><a href="#CatalogSearching">Searching the Catalog</a></li>
+        <li><a href="#ShoppingCart">Working with the Shopping Cart</a></li>
+        <li><a href="#ShoppingCartAdd">Adding and Removing Items</a></li>
+        <li><a href="#ShoppingCartUpdate">Updating the Quantity of an Item</a></li>
+        <li><a href="#Ordering">Ordering Items</a></li>
+        <li><a href="#OrderReview">Reviewing an Order</a></li>
+        <li><a href="#Issues">Known Issues</a></li>
+      </ul>
+
+      <h2><a id="SigningUp" name="SigningUp"></a>Signing Up</h2>
+
+      <p>
+        To sign up, click the Sign-in link at the right end of the banner. Next,
+        click the New User link in the resulting page. Among other information, the
+        signup page requires you to provide a user identifier and password. This
+        information is used to identify your account and must be provided when
+        signing in.
+      </p>
+
+      <h2><a id="SigningIn" name="SigningIn"></a>Signing In</h2>
+
+      <p>
+        You sign in to the application by clicking the Sign-in link at the right end
+        of the banner, filling in the user identifier and password, and clicking the
+        Submit button.
+      </p>
+
+      <p>
+        You will also be redirected to the signin page when you try to place an
+        order and you have not signed in. Once you have signed in, you can return to
+        your shopping session by clicking the shopping cart icon at the right end of
+        the banner.
+      </p>
+
+      <h2><a id="Catalog" name="Catalog"></a>Working with the Product Catalog</h2>
+
+      <p>This section describes how to browse and search the product catalog.</p>
+
+      <h4><a id="CatalogBrowsing" name="CatalogBrowsing"></a>Browsing the Catalog</h4>
+
+      <p>
+        The pet store catalog is organized hierarchically as follows: categories,
+        products, items.
+      </p>
+
+      <p>
+        You list the pets in a category by clicking on the category name in the
+        left column of the main page, or by clicking on the picture representing the
+        category.
+      </p>
+
+      <p>
+        Once you select a category, the pet store will display a list of products
+        within a category. Selecting a product displays a list of items and their
+        prices. Selecting a product item displays a text and visual description of
+        the item and the number of that item in stock.
+      </p>
+
+      <h4><a id="CatalogSearching" name="CatalogSearching"></a>Searching the Catalog</h4>
+
+      <p>
+        You search for products by typing the product name in search field in the
+        middle of the banner.
+      </p>
+
+      <h2><a id="ShoppingCart" name="ShoppingCart"></a>Working with the Shopping Cart</h2>
+
+      <h4><a id="ShoppingCartAdd" name="ShoppingCartAdd"></a>Adding and Removing Items</h4>
+
+      <p>
+        You add an item to your shopping cart by clicking the Add to Cart button to
+        the right of an item. This action also displays your shopping cart.
+      </p>
+
+      <p>
+        You can remove the item by clicking the Remove button to the left of the
+        item.
+      </p>
+
+      <p>
+        To continue shopping, you select a product category from the list under
+        the banner.
+      </p>
+
+      <h4><a id="ShoppingCartUpdate" name="ShoppingCartUpdate"></a>Updating the Quantity of an Item</h4>
+
+      <p>
+        You adjust the quantity of an item by typing the quantity in the item's
+        Quantity field in the shopping cart and clicking the Update button.
+      </p>
+
+      <p>
+        If the quantity of items requested is greater than that in stock, the In
+        Stock field in the shopping cart will show that the item is backordered.
+      </p>
+
+      <h4><a id="Ordering" name="Ordering"></a>Ordering Items</h4>
+
+      <p>
+        You order the items in the shopping cart by selecting the Proceed to Checkout
+        button. The pet store will display a read-only list of the shopping cart
+        contents. To proceed with the checkout, click the Continue button.
+      </p>
+
+      <p>
+        If you have not signed in, the application will display the signin page,
+        where you will need to provide your account name and password. Otherwise, the
+        application will display a page requesting payment and shipping information.
+        When you have filled in the required information, you click the Submit
+        button, and the application will display a read-only page containing your
+        billing and shipping address. If you need to change any information,
+        click your browser's Back button and enter the correct information. To
+        complete the order, you click the Continue button.
+      </p>
+
+      <h2><a id="OrderReview" name="OrderReview"></a>Reviewing An Order</h2>
+
+      <p>
+        The final screen contains your order information.
+      </p>
+
+      <p>
+        The application can be set up to send email confirmation of orders.
+        This option can only be set when the application is deployed. See the
+        installation instructions for further information.
+      </p>
+
+
+      <p><sub>Copyright www.mybatis.org</sub></p>
+
     </div>
-    <div class="top">
-      &nbsp
-    </div>
+
+    </body>
+
+
+
   </div>
 </template>
 
 <script>
-  import leftSteps from './Steps'
+
 
   export default {
-    name: 'app',
+
     data() {
       return {
-        CategoryList: [
-          {
-            id: 'BIRDS',
-            ProductList: [
-              {
-                id: 'AV-CB-01',
-                name: 'Amazon Parrot',
-                description: 'Great companion for up to 75 years',
-                ItemList: [
-                  {
-                    index3: 1,
-                    item:
-                      [{
-                        id: 'EST-1',
-                        url: require("@/assets/ham.png"),
-                        UnitCost: '10',
-                        Supplier: '1',
-                        Status: 'P',
-                        Attribute: 'Spotted Adult Female',
-                        rotate: false,
-                      }, {
-                        id: 'item2',
-                        url: require("@/assets/ham.png"),
-                        UnitCost: '10',
-                        Supplier: '1',
-                        Status: 'P',
-                        Attribute: 'Spotted Adult Female',
-                        rotate: false,
-                      }, {
-                        id: 'item3',
-                        url: require("@/assets/ham.png"),
-                        UnitCost: '10',
-                        Supplier: '1',
-                        Status: 'P',
-                        Attribute: 'Spotted Adult Female',
-                        rotate: false,
-                      }]
-                  },
-                  {
-                    index3: 2,
-                    item:
-                      [{
-                        id: 'item4',
-                        url: require("@/assets/ham.png"),
-                        UnitCost: '10',
-                        Supplier: '1',
-                        Status: 'P',
-                        Attribute: 'Spotted Adult Female',
-                        rotate: false,
-                      }, {
-                        id: 'item5',
-                        url: require("@/assets/ham.png"),
-                        UnitCost: '10',
-                        Supplier: '1',
-                        Status: 'P',
-                        Attribute: 'Spotted Adult Female',
-                        rotate: false,
-                      }, {
-                        id: 'item6',
-                        url: require("@/assets/ham.png"),
-                        UnitCost: '10',
-                        Supplier: '1',
-                        Status: 'P',
-                        Attribute: 'Spotted Adult Female',
-                        rotate: false,
-                      }]
-                  },
-                ]
-                //  item
-              },
-              {
-                id: 'AV-CB-02',
-                name: 'Finch',
-                description:
-                  'Great companion for up to 75 years',
-              }]
-            //product1
-          },
-          {
-            id: 'Dogs',
-            ProductList: [{
-              id: 'AV-CB-01',
-              name: 'Amazon Parrot',
-              description: 'Great companion for up to 75 years',
-              ItemList: [
-                {
-                  itemList1:
-                    [{
-                      id: 'EST-1',
-                      url: require("@/assets/ham.png"),
-                      UnitCost: '10',
-                      Supplier: '1',
-                      Status: 'P',
-                      Attribute: 'Spotted Adult Female',
-                      rotate: false,
-                    }, {
-                      id: 'item2',
-                      url: require("@/assets/ham.png"),
-                      UnitCost: '10',
-                      Supplier: '1',
-                      Status: 'P',
-                      Attribute: 'Spotted Adult Female',
-                      rotate: false,
-                    }, {
-                      id: 'item3',
-                      url: require("@/assets/ham.png"),
-                      UnitCost: '10',
-                      Supplier: '1',
-                      Status: 'P',
-                      Attribute: 'Spotted Adult Female',
-                      rotate: false,
-                    }]
-                },
-                {
-                  itemList2:
-                    [{
-                      id: 'EST-1',
-                      url: require("@/assets/ham.png"),
-                      UnitCost: '10',
-                      Supplier: '1',
-                      Status: 'P',
-                      Attribute: 'Spotted Adult Female',
-                      rotate: false,
-                    }, {
-                      id: 'item2',
-                      url: require("@/assets/ham.png"),
-                      UnitCost: '10',
-                      Supplier: '1',
-                      Status: 'P',
-                      Attribute: 'Spotted Adult Female',
-                      rotate: false,
-                    }, {
-                      id: 'item3',
-                      url: require("@/assets/ham.png"),
-                      UnitCost: '10',
-                      Supplier: '1',
-                      Status: 'P',
-                      Attribute: 'Spotted Adult Female',
-                      rotate: false,
-                    }]
-                },
-              ]
-              //  item
-            },
-              {
-                id: 'AV-CB-02',
-                name: 'Finch',
-                description:
-                  'Great companion for up to 75 years',
-              }]
-            //product2
-          },
 
-        ],
-
-
-        steps: {
-          active: 0,
-          step: [
-            {title: 'BIRDS'},
-            {title: 'CAT'},
-            {title: 'DOG'},
-            {title: 'FISH'},
-            {title: 'REPTILES'},
-            {title: 'HAMSTER'}
-          ]
-        }
       }
     },
     mounted: function () {
-      this.$nextTick(function () {
-        window.addEventListener('scroll', this.onScroll)
-      })
+
     },
     methods: {
-      onScroll() {
-        let scrolled = document.documentElement.scrollTop || document.body.scrollTop
-        // 手动获取到各个锚点的距离
-        if (scrolled >= 3000) {
-          this.steps.active = 5
-        } else if (scrolled < 3000 && scrolled >= 2400) {
-          this.steps.active = 4
-        } else if (scrolled < 2400 && scrolled >= 1800) {
-          this.steps.active = 3
-        } else if (scrolled < 1800 && scrolled >= 1200) {
-          this.steps.active = 2
-        } else if (scrolled < 1200 && scrolled >= 600) {
-          this.steps.active = 1
-        } else {
-          this.steps.active = 0
-        }
-      }
+
     },
-    computed: {},
-    components: {
-      'left-step': leftSteps
-    }
+    computed: {
+
+    },
+
+
   }
 </script>
 
 <style scoped>
-  .top {
-    height: 120px;
-  }
 
-  .product {
-    height: 550px;
-    background-color: #ffffff;
-    color: #636363;
-    font-size: 20px;
-    align-items: center;
-  }
-
-  .item {
-    height: 200px;
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-
-  .main-body {
-    padding: 0 180px;
-    margin: 0 auto;
-
-  }
-
-  .d_jump {
-    height: 600px;
-    font-size: 30px;
-    color: #ffffff;
-    background-color: transparent;
-    /*background-color: rgba(255, 255, 255, 0.90);*/
-
-    text-align: center;
-    /*border-bottom: 1px solid #333;*/
-  }
-
-  .step {
-    position: fixed;
-    left: 25px;
-    top: 100px;
-  }
-/*  item*/
-  .item-image{
-    height: 180px;
-    width: 180px;
-  }
 </style>
 

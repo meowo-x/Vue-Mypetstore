@@ -1,4 +1,3 @@
-
 <template>
   <div class="cart">
     <!--    占位-->
@@ -29,9 +28,11 @@
     <el-card id="money" shadow="never"
              style="width:88%; margin-left: 6%;background-color: #e2e2e2; border-radius: 5px;">
       <!--      是否付钱-->
-      <div  style="padding-left: 1000px; padding-top: 20px; font-size: 17px">
+      <div style="padding-left: 1000px; padding-top: 20px; font-size: 17px">
         <span v-if="isPaid" style="color:#19b525;">Paid</span>
-        <span v-else style="color:  red;"  @click="toPay(order.orderId)" >Not Paid</span>
+        <span v-else style="color:  red;" @click="toPay(order.orderId)">Not Paid</span>
+
+        <el-button type="danger" round @click="deleteOrder(order.orderId)">Delete</el-button>
       </div>
       <!--      地址-->
       <el-card shadow="never" style="border-radius: 10px">
@@ -104,8 +105,8 @@
             <el-col :span="8">
               Discount:$0
             </el-col>
-            <el-col :span="8" >
-              Total: $    {{order.subTotal}}
+            <el-col :span="8">
+              Total: $ {{order.subTotal}}
             </el-col>
           </el-row>
         </div>
@@ -151,7 +152,7 @@
             return this.$message.error('获取order信息失败')
           } else {
             this.order = res.data.data.order;
-            this.isPaid = res.data.data.order.paid !== 'N' ;
+            this.isPaid = res.data.data.order.paid !== 'N';
           }
 
         }).catch(err => {
@@ -159,38 +160,36 @@
         })
       },
       //得到一个
-      getOneOrder(id){
-        //}/order/order/1026
+      getOneOrder(id) {
         this.$axios.get('/api/order/order/' + id).then(res => {
           if (res.data.status !== 200) {
             return this.$message.error('获取order信息失败')
           } else {
             this.order = res.data.data.order;
-            this.isPaid = res.data.data.order.paid !== 'N' ;
+            this.isPaid = res.data.data.order.paid !== 'N';
           }
         }).catch(err => {
           console.log(err);
         })
       },
       //得到电话
-      getPhone(){
+      getPhone() {
         this.$axios.get('/api/account/user/' + this.username).then(res => {
           if (res.data.status !== 200) {
             return this.$message.error('Get user failed')
-          }else{
-            this.phone =  res.data.data.user.phone;
-            console.log( this.phone )
+          } else {
+            this.phone = res.data.data.user.phone;
           }
-        }).catch(err=>{
+        }).catch(err => {
           console.log(err);
         })
       },
       //得到OrderId
       getOrderId() {
         this.$axios.get('/api/order/orderId/' + this.username).then(res => {
-          console.log(res);
+
           let id = res.data.data.orderId;
-          console.log(id);
+
           this.getItem(id);
         }).catch(err => {
           console.log(err);
@@ -199,7 +198,7 @@
       //展示商品
       getItem(id) {
         this.$axios.get('/api/order/itemShowList/' + id).then(res => {
-          console.log(res);
+
           if (res.data.status !== 200) {
             return this.$message.error('获取order信息失败')
           } else
@@ -209,14 +208,44 @@
         })
       },
       //没付款就可以去付款
-      toPay(id){
+      toPay(id) {
         this.$router.push('/checkout');
         // 将返回的orderId注入内存
         sessionStorage.setItem('orderId', id);
       },
+      //删除订单
+      deleteOrder(id){
+        const confirmResult = this.$confirm('Are you sure you want to delete it permanently?', 'message', {
+          confirmButtonText: 'Confirm',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.$axios.delete('/api/order/order/' + id).then(res=>{
 
-  //所有
-      all(){
+            if (res.data.status !== 200) {
+              return this.$message.error('Delete failed!')
+            }
+            this.$message({
+              type: 'success',
+              message: 'Delete successfully!'
+            });
+            this.$router.go(0)
+          }).catch(err=>{
+            console.log(err);
+            this.$message({
+              type: 'error',
+              message: 'Error!'
+            });
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Deletion have been cancelled.'
+          });
+        });
+      },
+      //所有
+      all() {
         this.$router.push('/my/order/all')
       }
     }

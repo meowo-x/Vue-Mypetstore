@@ -31,6 +31,9 @@
          Not paid
       </div>
     </div>
+    <div style="position: absolute; left: 1180px;top: 20px;z-index:100">
+      <el-button type="danger" round @click="deleteOrder(order.orderId)">Delete</el-button>
+    </div>
 <!--    id-->
     <span style="font-size: 20px;color: #575757">Order Id:   {{order.orderId}} </span>
     <br>
@@ -170,13 +173,11 @@
       //得到商品
       getItem(id) {
         this.$axios.get('/api/order/itemShowList/' + id).then(res => {
-          console.log('You get details of this order');
-          console.log(res);
           if (res.data.status !== 200) {
             return this.$message.error('Get item failed')
           }else{
             this.item = res.data.data;
-            console.log(this.item);
+
           }
         }).catch(err=>{
           console.log(err);
@@ -189,7 +190,7 @@
             return this.$message.error('获取order信息失败')
           } else {
             this.orderList = res.data.data.orderList;
-            console.log( this.orderList)
+
           }
         }).catch(err => {
           console.log(err);
@@ -203,13 +204,41 @@
             return this.$message.error('Get user failed')
           }else {
             this.phone =  res.data.data.user.phone;
-            console.log( this.phone )
           }
         }).catch(err=>{
           console.log(err);
         })
       },
-
+    //删除订单
+      deleteOrder(id){
+        const confirmResult = this.$confirm('Are you sure you want to delete it permanently?', 'message', {
+          confirmButtonText: 'Confirm',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          this.$axios.delete('/api/order/order/' + id).then(res=>{
+            if (res.data.status !== 200) {
+              return this.$message.error('Delete failed!')
+            }
+            this.$message({
+              type: 'success',
+              message: 'Delete successfully!'
+            });
+            this.$router.go(0)
+          }).catch(err=>{
+            console.log(err);
+            this.$message({
+              type: 'error',
+              message: 'Error!'
+            });
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: 'Deletion have been cancelled.'
+          });
+        });
+      },
 
     }
   }

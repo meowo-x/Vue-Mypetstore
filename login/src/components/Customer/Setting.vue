@@ -37,10 +37,10 @@
 <!--    修改-->
     <el-dialog title="Edit your information" :visible.sync="dialog">
       <el-form :model="userForm" ref="userForm" :rules="rule">
-        <el-form-item label="Username" label-width="120">
+        <el-form-item label="Username" label-width="120" prop="username">
           <el-input v-model="userForm.username" disabled></el-input>
         </el-form-item>
-        <el-form-item label="URL" prop="username" label-width="120">
+        <el-form-item label="URL" prop="url" label-width="120">
           <el-input v-model="userForm.url" ></el-input>
         </el-form-item>
         <el-form-item label="Password"  prop="password" label-width="120">

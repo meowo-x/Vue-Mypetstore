@@ -3,63 +3,159 @@
     <el-card shadow="hover">
       <div class="head">
         <!-- 搜索 -->
-        <el-row :gutter="20">
-          <el-col :span="18">
-            <el-input placeholder="Please enter ID" v-model="quertInfo.query" clearable @clear="getOrderList"></el-input>
-          </el-col>
-          <el-col :span="6">
-            <el-button type="primary" icon="el-icon-search" @click="getOrderList"></el-button>
-          </el-col>
-        </el-row>
+        <div>
+          <el-input placeholder="Please enter" v-model="input" class="input-with-select" style="width: 450px">
+            <el-select v-model="select" slot="prepend" placeholder="Please Choose" style="width: 150px;">
+              <el-option label="By username" value="username"></el-option>
+              <el-option label="By orderId" value="orderId"></el-option>
+            </el-select>
+            <el-button slot="append" icon="el-icon-search" @click="getOrderList(select,input)"></el-button>
+          </el-input>
+        </div>
         <!-- 面包屑-->
         <el-breadcrumb separator-class="el-icon-arrow-right">
-          <el-breadcrumb-item :to="{ path: '/admin' }">Main</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: '/home' }">Admin</el-breadcrumb-item>
           <el-breadcrumb-item>Order</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
       <el-divider><i class="el-icon-s-order"></i></el-divider>
 
-      <div class="add">
-        <div class="title">
-          Order List
+      <!--这是按username的全部order-->
+      <div v-if="allOrder" class="cart">
+        <!--    占位-->
+        <div style="width: 140px; height: 100px; "></div>
+        <div>
+          <span style="font-size: 40px;color: #ffffff">All Order </span>
         </div>
-        <!--      添加新order-->
-        <el-button type="primary" @click="addDialogVisible=true">Add New Order</el-button>
+        <div style="position: absolute;">
+          <el-image style="width: 160px; height: 150px;left: 400px;top: -80px;z-index:100" :src="url"></el-image>
+        </div>
+        <div style="position: absolute;">
+        </div>
+        <!--    order-->
+        <div v-for="(order,orderId) in orderList" :key="orderId">
+          <el-card id="money" shadow="never"
+                   style="width: 90%;margin-left: 5%;background-color: #e2e2e2; border-radius: 5px; position: relative">
+            <!--   支付否 -->
+            <div
+              style="text-align: center;color: #ffffff;position: absolute;font-size: 20px; left: 1200px;top: 120px;z-index:100">
+              <div v-if="order.paid = 'Y' "
+                   style="background-color: rgba(25,181,37,0.92); width: 50px;height: 50px; border-radius: 50%; padding-top: 10px;">
+                Paid
+              </div>
+              <div v-else
+                   style="background-color: red; width: 50px;height: 50px; border-radius: 50%; padding-top: 10px;">
+                Not paid
+              </div>
+            </div>
+            <div style="position: absolute; left: 1180px;top: 20px;z-index:100">
+              <el-button type="danger" round @click="deleteOrder(order.orderId)">Delete</el-button>
+            </div>
+            <!--    id-->
+            <span style="font-size: 20px;color: #575757">Order Id:   {{order.orderId}} </span>
+            <br>
+            <span style="color: #575757">{{order.orderDate}}</span>
+            <!--      地址-->
+            <el-card shadow="never" style="border-radius: 10px">
+              <el-row :gutter="1" style="width: 88%">
+                <el-col :span="4">
+                  <div style="width: 80px;float: right;padding-top: 15px">
+                    <div class="circle">
+                      <div class="no-link">
+                        <i class="el-icon-location-outline"></i>
+                      </div>
+                    </div>
+                  </div>
+                </el-col>
+                <el-col :span="14">
+                  <div style="text-align: left">
+                    <span style="font-size: 30px">{{order.username}}</span>
+                    <span style="font-size: 15px;color: #767676">{{getPhone(order.username)}}</span>
+                    <div style="font-size: 22px">Send to: {{order.sendTo}}</div>
+                  </div>
+                </el-col>
+                <el-col :span="6">
+                  <div style="color: #636363; font-size: 20px;"> Click
+                    <el-link :underline="false" type="success" @click="getItem(order.orderId)">
+                      here&nbsp;
+                    </el-link>
+                    to see more details
+                  </div>
+                </el-col>
+              </el-row>
+
+              <br>
+              <!--      商品展示-->
+              <div v-for="(cartItem,itemId) in item" :key="itemId">
+                <el-card shadow="never" style="border-radius: 10px">
+                  <div style="text-align: left; width: 80%; padding-left: 10%;">
+                    <!--            productId-->
+                    <div style="font-size: 20px">
+                      <span class="product"><i class="el-icon-s-goods"></i>  </span>
+                      {{cartItem.productId}}
+                    </div>
+                    <!--            item-->
+                    <div style="position: relative">
+            <span>
+             <el-image :src="cartItem.url" style="width: 100px;height: 100px"></el-image>
+            </span>
+                      <span style="position: absolute; right: 40px;width: 600px;font-size: 20px">
+                <el-row>
+                  <el-col :span="12">
+                     {{cartItem.itemId}}
+                    <br>
+                    <span style="font-size: 15px;color: #767676;background-color: #e2e2e2;">
+                      {{cartItem.text}}
+                    </span>
+                  </el-col>
+                  <el-col :span="12" style="text-align: right;">
+                   <span>
+                  $ {{cartItem.totalCost}}
+                     <br>
+                  <span style="color: #767676;font-size: 15px;">
+                    x {{cartItem.quantity}}
+                  </span>
+                    </span>
+                  </el-col>
+                </el-row>
+            </span>
+                    </div>
+                  </div>
+                </el-card>
+                <br>
+              </div>
+              <!--    cost-->
+              <div style="font-size: 20px">
+                <el-row>
+                  <el-col :span="8">
+                    Total: {{order.totalCount}}item(s)
+                  </el-col>
+                  <el-col :span="8">
+                    Discount:$0
+                  </el-col>
+                  <el-col :span="8">
+                    TotalCost: $
+                    <span v-if="order.paid = 'Y' ">
+                 {{order.subTotal}}
+            </span>
+                    <span v-else>
+             0
+           </span>
+                  </el-col>
+                </el-row>
+              </div>
+            </el-card>
+
+
+          </el-card>
+          <br>
+
+        </div>
       </div>
-      <!-- 列表 -->
-      <el-table :data="orderList" border stripe>
-        <el-table-column type="index" label="#"></el-table-column>
-        <el-table-column label="Order Id" prop="id"></el-table-column>
-        <el-table-column label="User Id" prop="userid"></el-table-column>
-        <el-table-column label="Order Date" prop="orderDate"></el-table-column>
-        <el-table-column label="Ship  Addr" prop="shipaddr"></el-table-column>
-        <el-table-column label="Ship to" prop="shiptoname"></el-table-column>
-        <el-table-column label="Bill Address" prop="billaddr"></el-table-column>
-        <el-table-column label="Bill to" prop="billtoname"></el-table-column>
-        <el-table-column label="Courier" prop="courier"></el-table-column>快递员
-        <el-table-column label="Total Price" prop="totalprice"></el-table-column>
-        <el-table-column label="Credit Card" prop="creditcard"></el-table-column>
-        <el-table-column label="ExpressDate" prop="exprdate"></el-table-column>
-        <el-table-column label="Setting" width="130px">
-          <template slot-scope="scope">
-            <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog(scope.row.id)"></el-button>
-            <el-button type="danger" icon="el-icon-delete" size="mini" @click="removeById(scope.row.id)"></el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <!-- 分页 -->
-      <el-pagination
-        @size-change="handSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="quertInfo.pagenum"
-        :page-sizes="[1, 2, 5, 10]"
-        :page-size="quertInfo.pagesize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total">
-      </el-pagination>
+<!--all结束-->
     </el-card>
     <!--  添加对话框-->
-    <el-dialog title="Add" :visible.sync="addDialogVisible" @close="addDialogClosed">
+    <el-dialog title="Add" :visible.sync="addDialogVisible" @close="">
       <el-form :model="addForm" status-icon :rules="formRules" ref="addFormRef" label-width="100px">
         <el-form-item label="Order Id" prop="id">
           <el-input v-model="addForm.id"></el-input>
@@ -101,7 +197,7 @@
       </div>
     </el-dialog>
     <!--  修改对话框-->
-    <el-dialog title="Edit" :visible.sync="editDialogVisible" @close="editDialogClosed">
+    <el-dialog title="Edit" :visible.sync="editDialogVisible" @close="">
       <el-form :model="editForm" status-icon :rules="formRules" ref="editFormRef" label-width="100px">
         <el-form-item label="Order Id">
           <el-input v-model="editForm.id" disabled></el-input>
@@ -146,114 +242,91 @@
 </template>
 
 <script>
+  import panda from '../../assets/panda1.png'
+  import panda2 from '../../assets/panda2.png'
+
   export default {
     data() {
       return {
-        // 获取用户列表参数
-        quertInfo: {
-          query: '',
-          pagenum: 1, // 当前页数
-          pagesize: 2 // 每页显示多少条数据
-        },
-        orderList: [{
-          id: '1',   //order的id
-          name: '1',  //用户名
-          orderDate: '',//啥时候下单的
-          totalprice: '',//一共多少钱
-          paid: '',//付钱了吗
-          sendForm: '',//供应商地址
-          sendTo: '',//寄给哪里
-          sendToWho: '',//寄给谁
-          sended:'',//发货了吗
-        }],
-        //  一共多少页
-        total: 0,
-        // 添加新用户对话框的显示隐藏
+        input: '',
+        select: '',
+        url: panda,
+        url2: panda2,
+        allOrder: false,
+        oneOrder: false,
+        orderList: [],
+        item: [],
+        // 添加新 对话框的显示隐藏
         addDialogVisible: false,
-        // 新用户数据表单
-        addForm: {
-          id: '',
-          userid: '',
-          orderDate: '',
-          shipaddr: '',
-          shiptoname: '',
-          billaddr: '',
-          billtoname: '',
-          courier: '',
-          totalprice: '',
-          creditcard: '',
-          exprdate: ''
-        },
+        // 新 数据表单
+        addForm: {},
         //添加的验证规则
-        formRules: {
-          id: [
-            {
-              required: true, message: 'Please enter id',
-              trigger: 'blur'
-            },
-            {
-              min: 3,
-              max: 10,
-              message: 'Between 3-10 characters',
-              trigger: 'blur'
-            }
-          ],
-          userid: [
-            {required: true, message: 'Please enter user id', trigger: 'blur'}
-          ],
-          orderDate: [
-            {required: true, message: 'Please enter order date', trigger: 'blur'}
-          ],
-          shipaddr: [
-            {required: true, message: 'Please enter ship address', trigger: 'blur'},
-          ],
-          shiptoname: [
-            {required: true, message: 'Please enter ship to name', trigger: 'blur'}
-          ],
-          billaddr: [
-            {required: true, message: 'Please enter bill address', trigger: 'blur'}
-          ],
-          billtoname: [
-            {required: true, message: 'Please enter bill to name', trigger: 'blur'}
-          ],
-          totalprice: [
-            {required: true, message: 'Please enter total price', trigger: 'blur'}
-          ]
-        },
-        // 修改用户对话框的显示与隐藏
+        formRules: {},
+        // 修改 对话框的显示与隐藏
         editDialogVisible: false,
         //查询到的用户信息
         editForm: {}
       }
     },
     created() {
-      this.getOrderList()
+
     },
     methods: {
-      async getOrderList() {
-        const {data: res} = await this.$axios.get('order', {params: this.quertInfo});
-        if (res.meta.status !== 200) {
-          return this.$message.error('获取order信息失败')
+      //按 username 得到所有order
+      getOrderList(select, input) {
+        if (select === 'username') {
+
+          this.allOrder = true;
+            this.$axios.get('/api/order/orderList/' + input).then(res => {
+              console.log(res)
+              if (res.data.status !== 200) {
+                return this.$message.error('获取order信息失败')
+              } else {
+                this.orderList = res.data.data.orderList;
+              }
+            }).catch(err => {
+              console.log(err);
+            })
+        } else {
+          this.oneOrder = true,
+            this.$axios.get('/api/order/order/' + input).then(res => {
+              if (res.data.status !== 200) {
+                return this.$message.error('获取order信息失败')
+              } else {
+                this.order = res.data.data.order;
+                this.isPaid = res.data.data.order.paid !== 'N';
+              }
+            }).catch(err => {
+              console.log(err);
+            })
         }
-        this.orderList = res.data.order;
-        this.total = res.data.total;
-        console.log(res)
       },
-      // 监听
-      handSizeChange(newSize) {
-        // console.log(newSize)
-        this.quertInfo.pagesize = newSize;
-        this.getOrderList()
+      //得到商品
+      getItem(id) {
+        this.$axios.get('/api/order/itemShowList/' + id).then(res => {
+          if (res.data.status !== 200) {
+            return this.$message.error('Get item failed')
+          } else {
+            this.item = res.data.data;
+
+          }
+        }).catch(err => {
+          console.log(err);
+        })
       },
-      handleCurrentChange(newPage) {
-        // console.log(newPage)
-        this.quertInfo.pagenum = newPage;
-        this.getOrderList()
+      //得到电话
+      getPhone(username) {
+        this.$axios.get('/api/account/user/' + username).then(res => {
+          if (res.data.status !== 200) {
+            return this.$message.error('Get user failed')
+          } else {
+            return res.data.data.user.phone;
+          }
+        }).catch(err => {
+          console.log(err);
+        })
       },
-      // 监听添加用户对话框的关闭事件
-      addDialogClosed() {
-        this.$refs.addFormRef.resetFields();
-      },
+
       // 添加
       addUser() {
         this.$refs.addFormRef.validate(async valid => {
@@ -270,100 +343,80 @@
           this.getOrderList();
         })
       },
-      //编辑的对话框
-      async showEditDialog(id) {
-        const {data: res} = await this.$axios.get('order/' + id);
-        if (res.meta.status !== 200) {
-          return this.$message.error('Query Failed!')
-        }
-        this.editForm = res.data;
-        this.editDialogVisible = true;
-      },
-      // 监听编辑用户对话框的关闭事件
-      editDialogClosed() {
-        this.$refs.editFormRef.resetFields();
-      },
+
       // 编辑
       editOrder() {
-        this.$refs.editFormRef.validate(async valid => {
-          if (!valid) return;
-          // 可以发起edit用户的网络请求
-          const {data: res} = await this.$axios.put('order/', this.editForm.id, {
-            password: this.editForm.password,
-            userid: this.editForm.userid,
-            orderDate: this.editForm.orderDate,
-            shiptoname: this.editForm.shiptoname,
-            billaddr: this.editForm.billaddr,
-            billtoname: this.editForm.billtoname,
-            courier: this.editForm.courier,
-            totalprice: this.editForm.totalprice,
-            creditcard: this.editForm.creditcard,
-            exprdate: this.editForm.exprdate,
-          });
-          if (res.meta.status !== 201) {
-            this.$message.error('Edit Failed!');
-          }
-          this.$message.success('Edit successfully');
-          // 隐藏对话框
-          this.editDialogVisible = false;
-          // 刷新列表
-          this.getOrderList();
-        })
+
       },
-      //删除
-      async removeById(id) {
-        //弹窗
-        const confirmResult = await this.$confirm('Are you sure you want to delete it permanently?', 'message', {
+
+
+      //删除订单
+      deleteOrder(id) {
+        const confirmResult = this.$confirm('Are you sure you want to delete it permanently?', 'message', {
           confirmButtonText: 'Confirm',
           cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: 'Delete successfully!'
-          });
+          this.$axios.delete('/api/order/order/' + id).then(res => {
+            if (res.data.status !== 200) {
+              return this.$message.error('Delete failed!')
+            }
+            this.$message({
+              type: 'success',
+              message: 'Delete successfully!'
+            });
+            this.$router.go(0)
+          }).catch(err => {
+            console.log(err);
+            this.$message({
+              type: 'error',
+              message: 'Error!'
+            });
+          })
         }).catch(() => {
           this.$message({
             type: 'info',
             message: 'Deletion have been cancelled.'
           });
         });
-        const {data: res} = await this.$axios.delete('order/' + id);
-        if (res.meta.status !== 200) {
-          return this.$message.error('Delete failed!')
-        }
-        this.$message.success('Delete successfully!');
-        // 刷新列表
-        this.getOrderList();
-      }
+      },
+
     }
   }
 </script>
 
 <style scoped>
 
-  .add {
-    margin-top: 0px;
-    background-color: #fff;
+  .cart {
     width: 100%;
-    height: 45px;
-    display: flex;
-    justify-content: space-between;
-    padding-left: 10px;
-    padding-right: 20px;
-    align-items: center;
+    height: auto;
+    background-color: #447387;
+    position: relative;
   }
 
-  .el-table {
-    margin-top: 15px;
-    font-size: 12px;
+  .circle {
+    width: 50px;
+    height: 50px;
+    background: #ff7000;
+    border-radius: 50px;
+    position: relative;
   }
 
+  .no-link {
+    width: 50px;
+    height: 50px;
+    font-size: 40px;
+    font-weight: bold;
+    color: white;
+    position: absolute;
+    top: -3px;
+    /*z-index: 100;*/
+  }
 
-  .el-pagination {
-    display: flex;
-    justify-content: space-between;
-    padding-top: 10px;
+  .product {
+    font-size: 20px;
+    font-weight: bold;
+    color: red;
   }
 
 
